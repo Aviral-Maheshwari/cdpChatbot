@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CDP Chatbot</title>
+    <style>
+      /* Add your CSS here */
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2>CDP Chatbot</h2>
+      </div>
+      <div class="chat-body" id="chat-body">
+        <!-- Chat messages will appear here -->
+      </div>
+      <div class="chat-footer">
+        <input type="text" id="user-input" placeholder="Ask a question..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <script>
+      async function sendMessage() {
+        const userInput = document.getElementById("user-input").value;
+        if (!userInput) return;
+
+        // Add user message to chat
+        const chatBody = document.getElementById("chat-body");
+        chatBody.innerHTML += `<div class="message user-message">You: ${userInput}</div>`;
+
+        // Clear input
+        document.getElementById("user-input").value = "";
+
+        // Send request to backend
+        const response = await fetch("/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ question: userInput }),
+        });
+
+        const data = await response.json();
+        chatBody.innerHTML += `<div class="message bot-message">Bot: ${data.answer}</div>`;
+
+        // Scroll to bottom
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
